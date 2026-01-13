@@ -1,0 +1,51 @@
+﻿@model List<AcaoViewModel>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<button type="button" class="btn btn-primary">
+    <a asp-controller="Acao" asp-action="PrepareCreate" style="color: #FFF;">Registrar Nova</a>
+</button>
+
+<table id="tableAcoes" class="display">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>NOME</th>
+            <th>SETOR</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var acao in Model)
+        {
+            <tr>
+                <td>@acao.Id</td>
+                <td>@acao.Name</td>
+                <td>@acao.SetorName</td>
+                <td>
+                    <a asp-controller="Acao" asp-action="PrepareEdit" asp-route-id="@acao.Id" style="text-decoration: none;">
+                        <i class="bi bi-pencil me-2 cursor-pointer"></i>
+                    </a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/acao.js" asp-append-version="true"></script>
+}

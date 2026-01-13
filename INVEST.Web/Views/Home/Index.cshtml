@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row text-center mb-5">
+    <h2>Bem vindo ao invesT! Escolha o que irá fazer hoje:</h2>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card" style="width: 18rem; height: 14rem;">
+            <div class="card-body">
+                <h5 class="card-title">Ações</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Cadastre novas ações, administre</h6>
+                <p class="card-text">Você pode cadastrar novas, editar metadados destas, associar novos tickers</p>
+                <a asp-controller="Acao" asp-action="List" class="card-link">Ver todas</a>
+                <a asp-controller="Acao" asp-action="PrepareCreate" class="card-link">Cadastrar Nova</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card" style="width: 18rem; height: 14rem;">
+            <div class="card-body">
+                <h5 class="card-title">Indicadores</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Defina quais indicadores e como aplicar nas empresas</h6>
+                <p class="card-text">Cadastre novos, altere o nivel de qualidade esperado</p>
+                <a href="#" class="card-link">Ver todos</a>
+                <a href="#" class="card-link">Cadastrar Novo</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card" style="width: 18rem; height: 14rem;">
+            <div class="card-body">
+                <h5 class="card-title">Avaliar Empresas</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Cadastre os indicadores e veja a nota gerada</h6>
+                <p class="card-text">Cadastre indicadores, veja notas, compare</p>
+                <a href="#" class="card-link">Ver todas</a>
+                <a href="#" class="card-link">Gerar nova avaliação</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card" style="width: 18rem; height: 14rem;">
+            <div class="card-body">
+                <h5 class="card-title">Carrinho de compras</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Analise sua proxima compra</h6>
+                <p class="card-text">Veja quais ações comprar e melhor distribuição destas</p>
+                <a href="#" class="card-link">Ver todas</a>
+                <a href="#" class="card-link">Mês atual</a>
+            </div>
+        </div>
+    </div>
+</div>
