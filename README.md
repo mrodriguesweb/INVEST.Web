@@ -1,47 +1,72 @@
-# INVEST — Investment Tracker (WIP)
+# INVEST.Web — Investment Tracker (WIP)
 
-Side project para estudar e demonstrar **Clean Architecture** (Uncle Bob) em um contexto real: cadastro e manutenção de ações (com tickers), evoluindo depois para operações, indicadores e regras de negócio de carteira.
+Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying Clean Architecture and DDD-style aggregates (Acao/Tickers).  
+Focus: maintainability, testability, and separation of concerns.
 
-> Status: em desenvolvimento (WIP). O objetivo principal do repositório é arquitetura/testabilidade, não “produto final”.
+Repository: https://github.com/mrodriguesweb/invesT.Web
 
-## O que já existe
-- CRUD de Ação (Create / Edit / Delete) via ASP.NET Core MVC.
-- Tickers como coleção da Ação (sincronização no domínio: dedup + normalização).
-- Regra: nome da Ação não é editável após criação.
-- Separação em camadas (Web / Application / Domain / Infrastructure).
-- Post-Redirect-Get para operações de escrita + mensagens via TempData.
+> WIP means the project is intentionally incomplete: it is being evolved in small iterations to practice architecture + business rules.
 
-## Arquitetura (visão rápida)
-**Web (MVC)**  
-- Controllers recebem ViewModels, validam ModelState e mapeiam para Commands.
-- Controllers não contêm regra de negócio: apenas adaptação de entrada/saída.
+---
 
-**Application (Use Cases)**  
-- Handlers executam casos de uso (Create/Edit/Delete) e retornam Results (sucesso/erros).
-- Dependem de abstrações (ex.: `IAcaoRepository`, `ISetorQuery`).
+## Features (current)
+- CRUD de **Ação** (Create / Edit / Delete).
+- **Tickers** como coleção da Ação (normalização e sincronização via método de domínio).
+- Regra: **Name não é editável** após criação (imutabilidade por design: comando de edit não aceita Name).
+- Separação Read/Write:
+  - Reads retornam DTOs (queries).
+  - Writes carregam agregados via repositório.
 
-**Domain (Entidades/Regras)**  
-- Entidades possuem comportamento (ex.: `Acao.ReplaceTickers(...)`, `Acao.EditarDados(...)`).
-- Invariantes/regras ficam protegidas no domínio quando fizer sentido.
+---
 
-**Infrastructure (EF Core)**  
-- Implementa repositórios e queries usando EF Core.
-- Contém detalhes de persistência (Include, SaveChanges, etc.).
+## Architecture (Clean Architecture)
+A aplicação é organizada em camadas, mantendo dependências apontando para dentro.
 
-## Tecnologias
+- **Web (ASP.NET Core MVC)**
+  - Controllers + Views + ViewModels.
+  - Validação de formato (ModelState / DataAnnotations).
+  - Mapeamento ViewModel → Command.
+- **Application**
+  - Use Cases/Handlers (Create/Edit/Delete) + Commands/Results.
+  - Orquestração do fluxo e regras do caso de uso.
+  - Depende de abstrações (ex.: IAcaoRepository, ISetorQuery).
+- **Domain**
+  - Entidades e comportamento (ex.: `Acao.ReplaceTickers(...)`).
+  - Invariantes do agregado.
+- **Infrastructure**
+  - EF Core + PostgreSQL (Npgsql).
+  - Implementações de Repositórios/Queries.
+  - Migrations.
+
+---
+
+## Tech Stack
 - .NET (ASP.NET Core MVC)
 - Entity Framework Core
-- Banco de dados: PostgreSQL
-- Bootstrap (UI)
-
-## Como rodar localmente
-### Pré-requisitos
-- .NET SDK instalado
 - PostgreSQL
-- Banco de dados configurado (Ver connection string)
+- Npgsql EF Core Provider
 
-### Passo a passo
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/mrodriguesweb/INVEST.Web.git
-   cd INVEST.Web
+---
+
+## Getting Started (Local)
+### 1) Prerequisites
+- .NET SDK instalado
+- PostgreSQL rodando localmente (ou via Docker)
+- EF Core CLI tools:
+  ```bash
+  dotnet tool install --global dotnet-ef
+  ```
+  (ou atualizar)
+  ```
+  dotnet tool update --global dotnet-ef
+  ```
+### 2) Configure the database
+Crie o banco (ex.: DB_INVEST) e configure a connection string no appsettings.json:
+  ```
+  {
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=invest;Username=postgres;Password=postgres"
+  }
+}
+  ```
+### 3) Apply migrations
