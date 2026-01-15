@@ -1,0 +1,72 @@
+# INVEST.Web — Investment Tracker (WIP)
+
+Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying Clean Architecture and DDD-style aggregates (Acao/Tickers).  
+Focus: maintainability, testability, and separation of concerns.
+
+Repository: https://github.com/mrodriguesweb/invesT.Web
+
+> WIP means the project is intentionally incomplete: it is being evolved in small iterations to practice architecture + business rules.
+
+---
+
+## Features (current)
+- CRUD de **Ação** (Create / Edit / Delete).
+- **Tickers** como coleção da Ação (normalização e sincronização via método de domínio).
+- Regra: **Name não é editável** após criação (imutabilidade por design: comando de edit não aceita Name).
+- Separação Read/Write:
+  - Reads retornam DTOs (queries).
+  - Writes carregam agregados via repositório.
+
+---
+
+## Architecture (Clean Architecture)
+A aplicação é organizada em camadas, mantendo dependências apontando para dentro.
+
+- **Web (ASP.NET Core MVC)**
+  - Controllers + Views + ViewModels.
+  - Validação de formato (ModelState / DataAnnotations).
+  - Mapeamento ViewModel → Command.
+- **Application**
+  - Use Cases/Handlers (Create/Edit/Delete) + Commands/Results.
+  - Orquestração do fluxo e regras do caso de uso.
+  - Depende de abstrações (ex.: IAcaoRepository, ISetorQuery).
+- **Domain**
+  - Entidades e comportamento (ex.: `Acao.ReplaceTickers(...)`).
+  - Invariantes do agregado.
+- **Infrastructure**
+  - EF Core + PostgreSQL (Npgsql).
+  - Implementações de Repositórios/Queries.
+  - Migrations.
+
+---
+
+## Tech Stack
+- .NET (ASP.NET Core MVC)
+- Entity Framework Core
+- PostgreSQL
+- Npgsql EF Core Provider
+
+---
+
+## Getting Started (Local)
+### 1) Prerequisites
+- .NET SDK instalado
+- PostgreSQL rodando localmente (ou via Docker)
+- EF Core CLI tools:
+  ```bash
+  dotnet tool install --global dotnet-ef
+  ```
+  (ou atualizar)
+  ```
+  dotnet tool update --global dotnet-ef
+  ```
+### 2) Configure the database
+Crie o banco (ex.: DB_INVEST) e configure a connection string no appsettings.json:
+  ```
+  {
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=localhost;Port=5432;Database=invest;Username=postgres;Password=postgres"
+  }
+}
+  ```
+### 3) Apply migrations
