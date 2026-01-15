@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  invest-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: invest-web
+    ports:
+      - "8080:8080"   # expõe a porta do container para localhost
+    depends_on:
+      - postgres
+    environment:
+      # URL de conexão para o banco
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=DB_INVEST;Username={USER};Password={PASS}"
+      ASPNETCORE_URLS: "http://+:8080"
+
+  postgres:
+    image: postgres:16
+    container_name: invest-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: DB_INVEST
+      POSTGRES_USER: {USER}
+      POSTGRES_PASSWORD: {PASS}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

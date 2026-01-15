@@ -12,6 +12,12 @@ builder.Services
 
 var app = builder.Build();
 
+// aplicar migrations
+app.Services.ApplyMigrations();
+
+// Seed inicial dados
+app.Services.SeedDatabase();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
