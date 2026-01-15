@@ -1,6 +1,6 @@
 # INVEST.Web — Investment Tracker (WIP)
 
-Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying Clean Architecture and DDD-style aggregates (Acao/Tickers).  
+Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying Clean Architecture, DDD-style aggregates (Acao/Tickers) and Docker Compose(App + Postgres).  
 Focus: maintainability, testability, and separation of concerns.
 
 Repository: https://github.com/mrodriguesweb/invesT.Web
@@ -48,25 +48,17 @@ A aplicação é organizada em camadas, mantendo dependências apontando para de
 
 ---
 
-## Getting Started (Local)
-### 1) Prerequisites
-- .NET SDK instalado
-- PostgreSQL rodando localmente (ou via Docker)
-- EF Core CLI tools:
-  ```bash
-  dotnet tool install --global dotnet-ef
-  ```
-  (ou atualizar)
-  ```
-  dotnet tool update --global dotnet-ef
-  ```
-### 2) Configure the database
-Crie o banco (ex.: DB_INVEST) e configure a connection string no appsettings.json:
-  ```
-  {
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=invest;Username=postgres;Password=postgres"
-  }
-}
-  ```
-### 3) Apply migrations
+## Quickstart (Docker)
+Pré-requisitos: Docker Desktop (ou Docker Engine) com Docker Compose habilitado.  
+​
+Subir a aplicação + Postgres.    
+Na raiz do repositório, execute:
+
+```
+docker compose up --build
+```
+
+Esse comando cria e inicia os containers definidos no docker-compose.yml e, com --build, também reconstrói a imagem da aplicação quando houver alterações no Dockerfile/código.
+
+A aplicação ficará disponível em:
+http://localhost:8080
