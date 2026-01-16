@@ -1,9 +1,9 @@
 # INVEST.Web — Investment Tracker (WIP)
 
-Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying Clean Architecture, DDD-style aggregates (Acao/Tickers) and Docker Compose(App + Postgres).  
+Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying Clean Architecture, DDD-style aggregates (Acao/Tickers) and Docker Compose (App + Postgres).  
 Focus: maintainability, testability, and separation of concerns.
 
-Repository: https://github.com/mrodriguesweb/invesT.Web
+Repository: https://github.com/mrodriguesweb/INVEST.Web
 
 > WIP means the project is intentionally incomplete: it is being evolved in small iterations to practice architecture + business rules.
 
@@ -16,6 +16,10 @@ Repository: https://github.com/mrodriguesweb/invesT.Web
 - Separação Read/Write:
   - Reads retornam DTOs (queries).
   - Writes carregam agregados via repositório.
+- **Error handling**
+  - Erros esperados (validation/not found) retornam status/feedback na UI.
+  - Erros inesperados (exceptions) são capturados por handler global e logados.
+  - Páginas customizadas de status code (ex.: 404) via `UseStatusCodePagesWithReExecute`. (ver seção abaixo)
 
 ---
 
@@ -26,6 +30,7 @@ A aplicação é organizada em camadas, mantendo dependências apontando para de
   - Controllers + Views + ViewModels.
   - Validação de formato (ModelState / DataAnnotations).
   - Mapeamento ViewModel → Command.
+  - Tratamento global de exceptions (borda).
 - **Application**
   - Use Cases/Handlers (Create/Edit/Delete) + Commands/Results.
   - Orquestração do fluxo e regras do caso de uso.
@@ -40,6 +45,15 @@ A aplicação é organizada em camadas, mantendo dependências apontando para de
 
 ---
 
+## Error handling (como funciona)
+Este projeto separa:
+- **Erros esperados** (ex.: entidade não encontrada, validação) → retornos controlados no fluxo normal (ex.: `NotFound()` / mensagens de validação).
+- **Erros inesperados** (ex.: exception de infra/banco/bug) → capturados pelo middleware de exception handling (`UseExceptionHandler`) e logados.
+
+Também existem páginas customizadas de status code (ex.: 404) via `UseStatusCodePagesWithReExecute("/StatusCode/{0}")`.
+
+---
+
 ## Tech Stack
 - .NET (ASP.NET Core MVC)
 - Entity Framework Core
@@ -49,16 +63,14 @@ A aplicação é organizada em camadas, mantendo dependências apontando para de
 ---
 
 ## Quickstart (Docker)
-Pré-requisitos: Docker Desktop (ou Docker Engine) com Docker Compose habilitado.  
-​
-Subir a aplicação + Postgres.    
-Na raiz do repositório, execute:
+Pré-requisitos: Docker Desktop (ou Docker Engine) com Docker Compose habilitado.
 
-```
+Subir a aplicação + Postgres (na raiz do repo):
+
+```bash
 docker compose up --build
 ```
 
-Esse comando cria e inicia os containers definidos no docker-compose.yml e, com --build, também reconstrói a imagem da aplicação quando houver alterações no Dockerfile/código.
+A aplicação ficará disponível em: http://localhost:8080
 
-A aplicação ficará disponível em:
-http://localhost:8080
+**Observação**: na primeira execução, o projeto aplica migrations e faz um seed inicial (se configurado).
