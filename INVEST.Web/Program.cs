@@ -10,7 +10,19 @@ builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration);
 
+builder.Services.AddExceptionHandler<INVEST.Web.Middlewares.GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
+
+app.UseExceptionHandler();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+
+app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
 // aplicar migrations
 app.Services.ApplyMigrations();
@@ -18,11 +30,6 @@ app.Services.ApplyMigrations();
 // Seed inicial dados
 app.Services.SeedDatabase();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-}
 app.UseStaticFiles();
 
 app.UseRouting();

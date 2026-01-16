@@ -66,7 +66,7 @@ namespace INVEST.Web.Controllers
             if (!result.Success)
             {
                 foreach (var err in result.Errors)
-                    ModelState.AddModelError(string.Empty, err);
+                    ModelState.AddModelError(string.Empty, err.Message);
 
                 return View("PrepareCreate", VM);
             }
@@ -86,8 +86,7 @@ namespace INVEST.Web.Controllers
 
             if (acaoDto == null)
             {
-                TempData["ErrorMessage"] = "Não foi possível obter as informações da ação.";
-                return RedirectToAction("List");
+                return NotFound();
             }
 
             EditAcaoViewModel vm = AcaoMapper.MapToViewModel(acaoDto);

@@ -1,5 +1,6 @@
 ﻿using INVEST.Application.Acoes.DTOs;
 using INVEST.Application.Acoes.Repository;
+using INVEST.Application.Common.Errors;
 using INVEST.Application.Setores.Queries;
 using INVEST.Domain.Entities;
 
@@ -8,27 +9,27 @@ namespace INVEST.Application.Acoes.Handlers
     public sealed class CreateAcaoHandler(IAcaoRepository _acoes, ISetorQuery _setores)
     {
 
-        public async Task<CreateAcaoResult> Handle(CreateAcaoCommand cmd)
+        public async Task<Result<int>> Handle(CreateAcaoCommand cmd)
         {
 
-            var errors = new List<string>();
+            var errors = new List<Error>();
 
             if (string.IsNullOrWhiteSpace(cmd.Name))
-                errors.Add("Name obrigatório.");
+                errors.Add(new Error(ErrorType.Validation, "Name obrigatório."));
 
             if (cmd.Tickers.Count == 0)
-                errors.Add("Informe ao menos 1 ticker.");
+                errors.Add(new Error(ErrorType.Validation, "Informe ao menos 1 ticker."));
 
             if (errors.Count > 0)
-                return CreateAcaoResult.Fail(errors.ToArray());
+                return Result<int>.Fail(errors.ToArray());
 
             if (!await _setores.Exists(cmd.SetorId))
-                return CreateAcaoResult.Fail("Setor inválido.");
+                return Result<int>.Fail(new Error(ErrorType.Validation, "Setor inválido."));
 
             if (cmd.Tickers == null)
             {
-                errors.Add("Informe ao menos 1 ticker.");
-                return CreateAcaoResult.Fail(errors.ToArray());
+                errors.Add(new Error(ErrorType.Validation, "Informe ao menos 1 ticker."));
+                return Result<int>.Fail(errors.ToArray());
             }
 
             var tickers = cmd.Tickers
@@ -38,7 +39,7 @@ namespace INVEST.Application.Acoes.Handlers
                 .ToList();
 
             if (tickers.Count == 0)
-                return CreateAcaoResult.Fail("Informe ao menos 1 ticker válido.");
+                return Result<int>.Fail(new Error(ErrorType.Validation, "Informe ao menos 1 ticker válido."));
 
             var acao = new Acao(cmd.Name.Trim(), cmd.AnoEntrada, cmd.Estatal, cmd.SetorId);
 
@@ -49,7 +50,7 @@ namespace INVEST.Application.Acoes.Handlers
             await _acoes.Add(acao);
             await _acoes.SaveChanges();
 
-            return CreateAcaoResult.Ok(acao.Id);
+            return Result<int>.Ok(acao.Id);
         }
     }
 }
