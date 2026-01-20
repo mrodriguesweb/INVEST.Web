@@ -7,7 +7,10 @@ Repository: https://github.com/mrodriguesweb/INVEST.Web
 
 > WIP means the project is intentionally incomplete: it is being evolved in small iterations to practice architecture + business rules.
 
----
+## Demo
+<p align="center">
+  <img src="docs/demo.gif" width="900" alt="Demo - CRUD de Ação (Create/Edit/Delete)" />
+</p>
 
 ## Features (current)
 - CRUD de **Ação** (Create / Edit / Delete).
