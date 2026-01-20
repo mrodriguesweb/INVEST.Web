@@ -17,6 +17,12 @@ namespace INVEST.Application.Acoes.Handlers
             if (string.IsNullOrWhiteSpace(cmd.Name))
                 errors.Add(new Error(ErrorType.Validation, "Name obrigatório."));
 
+            if (cmd.Tickers == null)
+            {
+                errors.Add(new Error(ErrorType.Validation, "Informe ao menos 1 ticker."));
+                return Result<int>.Fail(errors.ToArray());
+            }
+
             if (cmd.Tickers.Count == 0)
                 errors.Add(new Error(ErrorType.Validation, "Informe ao menos 1 ticker."));
 
@@ -25,12 +31,6 @@ namespace INVEST.Application.Acoes.Handlers
 
             if (!await _setores.Exists(cmd.SetorId))
                 return Result<int>.Fail(new Error(ErrorType.Validation, "Setor inválido."));
-
-            if (cmd.Tickers == null)
-            {
-                errors.Add(new Error(ErrorType.Validation, "Informe ao menos 1 ticker."));
-                return Result<int>.Fail(errors.ToArray());
-            }
 
             var tickers = cmd.Tickers
                 .Where(t => !string.IsNullOrWhiteSpace(t))

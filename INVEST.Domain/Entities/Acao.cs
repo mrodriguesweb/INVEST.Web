@@ -31,6 +31,8 @@ namespace INVEST.Domain.Entities
             AnoEntrada = anoEntrada;
             Estatal = estatal;
             SetorId = setorId;
+
+            Tickers = new List<Ticker>();
         }
 
         public void ReplaceTickers(IEnumerable<string> rawTickers)
