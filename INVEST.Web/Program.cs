@@ -28,7 +28,7 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
 // aplicar migrations
-app.Services.ApplyMigrations();
+//app.Services.ApplyMigrations();
 
 // Seed inicial dados
 app.Services.SeedDatabase();
