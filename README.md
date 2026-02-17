@@ -1,4 +1,5 @@
 # INVEST.Web — Investment Tracker (WIP)
+[![CI](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci.yml/badge.svg)](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci.yml)
 
 Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying Clean Architecture, DDD-style aggregates (Acao/Tickers) and Docker Compose (App + Postgres).  
 Focus: maintainability, testability, and separation of concerns.
