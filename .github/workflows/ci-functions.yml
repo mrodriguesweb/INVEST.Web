@@ -20,13 +20,13 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore
-        run: dotnet restore ./src/functions/Company.Functions/Company.Functions.csproj
+        run: dotnet restore ./azure/functions/Company.Functions/Company.Functions.csproj
 
       - name: Build
-        run: dotnet build ./src/functions/Company.Functions/Company.Functions.csproj --configuration Release --no-restore
+        run: dotnet build ./azure/functions/Company.Functions/Company.Functions.csproj --configuration Release --no-restore
 
       - name: Publish
-        run: dotnet publish ./src/functions/Company.Functions/Company.Functions.csproj --configuration Release --output ./publish
+        run: dotnet publish ./azure/functions/Company.Functions/Company.Functions.csproj --configuration Release --output ./publish
 
       - name: Deploy to Azure Functions
         uses: azure/functions-action@v1
