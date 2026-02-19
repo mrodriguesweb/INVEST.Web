@@ -1,6 +1,7 @@
 ﻿using INVEST.Application.Acoes.DTOs;
 using INVEST.Application.Acoes.Handlers;
 using INVEST.Application.Acoes.Queries;
+using INVEST.Application.Acoes.Services;
 using INVEST.Application.Setores.Queries;
 using INVEST.Web.Extensions;
 using INVEST.Web.Mappers;
@@ -9,19 +10,20 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace INVEST.Web.Controllers
 {
-    public class AcaoController(IAcaoQuery acaoQuery, ISetorQuery setorQuery, CreateAcaoHandler createAcaoHandler, EditAcaoHandler editAcaoHandler, DeleteAcaoHandler deleteAcaoHandler) : Controller
+    public class AcaoController(IAcaoQuery acaoQuery, ISetorQuery setorQuery, CreateAcaoHandler createAcaoHandler, EditAcaoHandler editAcaoHandler, DeleteAcaoHandler deleteAcaoHandler, IAcaoService acaoService) : Controller
     {
 
         public async Task<IActionResult> List()
         {
 
-            var acoesList = await acaoQuery.List();
+            var acoesList = await acaoService.GetList();
 
             List<AcaoViewModel> VM = acoesList.Select(a => new AcaoViewModel
             {
                 Id = a.Id,
                 Name = a.Name,
-                SetorName = a.SetorName
+                SetorName = a.SetorName,
+                LinkLogoEmpresa = a.LinkLogoEmpresa
             })
             .ToList();
 
