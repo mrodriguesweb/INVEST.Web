@@ -1,43 +1,31 @@
-﻿using INVEST.Application.Acoes.DTOs;
+﻿using INVEST.Application.Acoes.Abstractions;
+using INVEST.Application.Acoes.DTOs;
 using INVEST.Application.Acoes.Queries;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace INVEST.Application.Acoes.Services
 {
     public class AcaoService(IAcaoQuery acaoQuery) : IAcaoService
     {
 
-        public async Task<List<AcaoListItemDto>> GetList()
-        {
+            public async Task<List<AcaoListItemDto>> GetList()
+            {
 
-            var acoes = await acaoQuery.List();
+                var acoes = await acaoQuery.List();
 
-            return acoes;
+                foreach (var acao in acoes)
+                {
+                    string EmpresaName = (acao.Name ?? string.Empty).ToUpper().Trim();
 
-        }
+                    acao.LinkLogoEmpresa = $"/logos/{EmpresaName}";
+                }
 
-        //public async Task SubmitCreate(CreateAcaoViewModel VM)
-        //{
+                return acoes;
 
-        //    AcaoModel Model = AcaoMapper.MapToModel(VM);
-
-        //    using var transaction = await db.Database.BeginTransactionAsync();
-
-        //    try
-        //    {
-
-        //        int idNewAcao = await acaoCommand.Create(Model);
-
-        //        await tickerCommand.Create(Model.Tickers, idNewAcao);
-
-        //        await transaction.CommitAsync();
-
-        //    }
-        //    catch (Exception)
-        //    {
-        //        await transaction.RollbackAsync();
-        //        throw;
-        //    }
-        //}
+            }
 
     }
 }

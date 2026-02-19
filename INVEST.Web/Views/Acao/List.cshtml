@@ -1,5 +1,28 @@
 ﻿@model List<AcaoViewModel>
 
+<style>
+    .logo-placeholder {
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #e9ecef;
+        color: #495057;
+        border-radius: 4px;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    .logo-img {
+        height: 40px;
+        width: auto;
+        display: inline-block;
+        vertical-align: middle;
+    }
+</style>
+
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">
@@ -22,6 +45,7 @@
     <thead>
         <tr>
             <th>ID</th>
+            <th>LOGO</th>
             <th>NOME</th>
             <th>SETOR</th>
             <th>Ações</th>
@@ -33,6 +57,9 @@
         {
             <tr>
                 <td>@acao.Id</td>
+                <td>
+                    <img src="@acao.LinkLogoEmpresa" alt="@acao.Name" class="logo-img" />
+                </td>
                 <td>@acao.Name</td>
                 <td>@acao.SetorName</td>
                 <td>
