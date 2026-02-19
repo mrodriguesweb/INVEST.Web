@@ -29,8 +29,6 @@ This repo is evolved in small iterations to practice architecture + cloud integr
   - **Client-side**: `Cache-Control: max-age=...` para o browser cachear as imagens.
 - Fallback: quando não existe logo no blob, a aplicação retorna um SVG com as iniciais da empresa.
 
-> Docs: veja `docs/azure-company-logos.md`
-
 ---
 
 ## Architecture (Clean Architecture)
@@ -65,8 +63,6 @@ Required settings (local via User Secrets / Azure App Settings):
 - `ci.yml`: build/test da solução
 - `feature-azure-app_mrodriguesweb-invest.yml`: build/publish/deploy do WebApp na Azure
 - `ci-functions.yml`: build/publish/deploy da Azure Function
-
-> Detalhes e secrets: `docs/ci-cd.md`
 
 ---
 
