@@ -1,4 +1,5 @@
-﻿using System;
+﻿using INVEST.Application.Tickers.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace INVEST.Application.Acoes.DTOs
 
         public bool Estatal { get; set; }
 
-        public List<string> Tickers { get; set; } = new();
+        public List<TickerItemDto> Tickers { get; set; } = new();
 
     }
 }
