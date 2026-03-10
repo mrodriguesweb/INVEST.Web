@@ -5,8 +5,9 @@ name: Build and deploy ASP.Net Core app to Azure Web App - mrodriguesweb-invest
 
 on:
   push:
-    branches:
-      - feature/azure-app
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
@@ -62,4 +63,5 @@ jobs:
           app-name: 'mrodriguesweb-invest'
           slot-name: 'Production'
           package: .
+
           
