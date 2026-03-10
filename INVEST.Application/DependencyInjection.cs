@@ -14,6 +14,7 @@ namespace INVEST.Application
             services.AddScoped<CreateAcaoHandler>();
             services.AddScoped<EditAcaoHandler>();
             services.AddScoped<DeleteAcaoHandler>();
+            services.AddScoped<AtualizarCotacoesHandler>();
 
             return services;
         }

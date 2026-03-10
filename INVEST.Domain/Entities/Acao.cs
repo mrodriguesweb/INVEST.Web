@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using INVEST.Domain.Entities.Acoes;
+using System.ComponentModel.DataAnnotations;
 
 namespace INVEST.Domain.Entities    
 {

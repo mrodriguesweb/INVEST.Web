@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using INVEST.Domain.Entities.Acoes;
+using System.ComponentModel.DataAnnotations;
 
 namespace INVEST.Domain.Entities
 {
@@ -16,6 +17,7 @@ namespace INVEST.Domain.Entities
 
         public ICollection<Indicador> Indicadores { get; set; }
 
+        public ICollection<PriceSnapshot> PriceSnapshots { get; set; }
 
     }
 }

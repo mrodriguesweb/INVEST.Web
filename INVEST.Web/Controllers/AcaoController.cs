@@ -7,10 +7,11 @@ using INVEST.Web.Extensions;
 using INVEST.Web.Mappers;
 using INVEST.Web.ViewModels.AcoesVM;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace INVEST.Web.Controllers
 {
-    public class AcaoController(IAcaoQuery acaoQuery, ISetorQuery setorQuery, CreateAcaoHandler createAcaoHandler, EditAcaoHandler editAcaoHandler, DeleteAcaoHandler deleteAcaoHandler, IAcaoService acaoService) : Controller
+    public class AcaoController(IAcaoQuery acaoQuery, ISetorQuery setorQuery, CreateAcaoHandler createAcaoHandler, EditAcaoHandler editAcaoHandler, DeleteAcaoHandler deleteAcaoHandler, IAcaoService acaoService, AtualizarCotacoesHandler atualizarCotacoesHandler) : Controller
     {
 
         public async Task<IActionResult> List()
@@ -23,7 +24,15 @@ namespace INVEST.Web.Controllers
                 Id = a.Id,
                 Name = a.Name,
                 SetorName = a.SetorName,
-                LinkLogoEmpresa = a.LinkLogoEmpresa
+                LinkLogoEmpresa = a.LinkLogoEmpresa,
+                Cotacoes = string.Join(" | ",
+                    a.Tickers.Select(t =>
+                        t.LastQuote.HasValue
+                            ? $"{t.Name}: {t.LastQuote.Value.ToString("0.##", CultureInfo.InvariantCulture)}"
+                            : $"{t.Name}: -"
+                    )
+                ),
+                UltimaCotacaoCapturada = a.UltimaCotacaoCapturada
             })
             .ToList();
 
@@ -146,6 +155,14 @@ namespace INVEST.Web.Controllers
 
             TempData["SuccessMessage"] = "Ação excluída com sucesso!";
             return RedirectToAction("List");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AtualizarCotacoes(int id)
+        {
+            await atualizarCotacoesHandler.HandleAsync(id);
+            TempData["SendUpdateQuotes"] = "Cotações enviadas para atualização em segundo plano!";
+            return RedirectToAction(nameof(List));
         }
 
     }
