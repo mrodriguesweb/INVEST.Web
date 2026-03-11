@@ -2,56 +2,197 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="row text-center mb-5">
-    <h2>Bem vindo ao invesT! Escolha o que irá fazer hoje:</h2>
-</div>
+<style>
+    :root {
+        --brand-1: #0b63d6;
+        --brand-2: #0db3ff;
+        --accent: #6f42c1;
+        --muted: #6c757d;
+        --card-bg: rgba(13,110,253,0.04);
+    }
 
-<div class="row">
-    <div class="col">
-        <div class="card" style="width: 18rem; height: 14rem;">
-            <div class="card-body">
-                <h5 class="card-title">Ações</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Cadastre novas ações, administre</h6>
-                <p class="card-text">Você pode cadastrar novas, editar metadados destas, associar novos tickers</p>
-                <a asp-controller="Acao" asp-action="List" class="card-link">Ver todas</a>
-                <a asp-controller="Acao" asp-action="PrepareCreate" class="card-link">Cadastrar Nova</a>
+    .hero {
+        background: linear-gradient(90deg, rgba(11,99,214,0.10), rgba(13,179,255,0.03));
+        border-left: 6px solid var(--brand-1);
+        padding: 1.75rem;
+        border-radius: .6rem;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .brand-logo {
+        width: 84px;
+        height: 84px;
+        flex: 0 0 84px;
+        display: inline-grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--brand-2), var(--brand-1));
+        border-radius: .6rem;
+        box-shadow: 0 8px 20px rgba(11,99,214,0.12);
+    }
+
+    .brand-logo svg { width: 56px; height: 56px; }
+
+    .hero h1 {
+        color: var(--brand-1);
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .hero p.lead {
+        color: var(--muted);
+        margin: .25rem 0 0;
+    }
+
+    .feature-card {
+        border: 0;
+        border-radius: .75rem;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(15,82,186,0.06);
+        transition: transform .18s ease, box-shadow .18s ease;
+        background: linear-gradient(180deg, rgba(11,99,214,0.02), rgba(111,66,193,0.01));
+    }
+
+    .feature-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 12px 30px rgba(11,99,214,0.12);
+    }
+
+    .feature-badge {
+        display: inline-block;
+        background: linear-gradient(90deg, rgba(13,179,255,0.12), rgba(111,66,193,0.08));
+        color: var(--brand-1);
+        padding: .25rem .5rem;
+        border-radius: .5rem;
+        font-weight: 600;
+        font-size: .85rem;
+        margin-bottom: .5rem;
+    }
+
+    .em-breve {
+        display: inline-block;
+        background: rgba(108,117,125,0.08);
+        color: var(--muted);
+        padding: .2rem .45rem;
+        border-radius: .45rem;
+        font-size: .82rem;
+        font-weight: 600;
+        margin-left: .5rem;
+    }
+
+    .cta-primary {
+        background: linear-gradient(90deg, var(--brand-2), var(--brand-1));
+        border: none;
+    }
+
+    .disabled-link {
+        pointer-events: none;
+        opacity: .65;
+    }
+
+    footer.home-footer {
+        margin-top: 2.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e9ecef;
+        color: var(--muted);
+        font-size: .9rem;
+    }
+</style>
+
+<div class="container">
+    <div class="hero">
+        <div class="brand-logo" aria-hidden="true">
+            <!-- Simple inline SVG logo that evokes a rising chart -->
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="invesT logo">
+                <rect width="64" height="64" rx="8" fill="none"/>
+                <path d="M10 44 L24 30 L34 38 L44 20 L54 28" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <circle cx="54" cy="28" r="3.2" fill="#fff"/>
+            </svg>
+        </div>
+
+        <div class="flex-grow-1">
+            <h1>Bem vindo ao invesT</h1>
+            <p class="lead">Um case de estudos para gestão e análise de ações — cadastre, organize e monitore cotações com uma interface limpa e profissional.</p>
+
+            <div class="mt-3 d-flex gap-2">
+                <a asp-controller="Acao" asp-action="List" class="btn btn-primary cta-primary">Ver Ações</a>
+                <a asp-controller="Acao" asp-action="PrepareCreate" class="btn btn-outline-primary">Cadastrar Nova</a>
+            </div>
+        </div>
+
+        <div class="text-end d-none d-md-block">
+            <div class="feature-badge">Study Case</div>
+            <div class="text-muted small mt-2">Atualizado: março 2026</div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="feature-badge">Ações</span>
+                            <h5 class="card-title mt-2">Gerencie empresas e tickers</h5>
+                        </div>
+                    </div>
+
+                    <p class="card-text text-muted">Cadastre novas ações, associe tickers e visualize últimas cotações capturadas para tomadas de decisão rápidas.</p>
+
+                    <div class="mt-3">
+                        <a asp-controller="Acao" asp-action="List" class="btn btn-sm btn-primary me-2">Ver todas</a>
+                        <a asp-controller="Acao" asp-action="PrepareCreate" class="btn btn-sm btn-outline-primary">Cadastrar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="feature-badge">Indicadores</span>
+                            <h5 class="card-title mt-2">Defina métricas e regras <span class="em-breve">Em breve</span></h5>
+                        </div>
+                    </div>
+
+                    <p class="card-text text-muted">Crie indicadores e regras de avaliação para comparar empresas segundo critérios padronizados.</p>
+
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-outline-primary disabled-link">Ver</button>
+                        <button class="btn btn-sm btn-outline-secondary disabled-link">Cadastrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="feature-badge">Avaliar</span>
+                            <h5 class="card-title mt-2">Avaliações & Relatórios <span class="em-breve">Em breve</span></h5>
+                        </div>
+                    </div>
+
+                    <p class="card-text text-muted">Aplique indicadores em empresas e gere relatórios de avaliação resumidos para facilitar decisões.</p>
+
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-primary disabled-link">Iniciar</button>
+                        <button class="btn btn-sm btn-outline-secondary disabled-link">Relatórios</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-   @*  <div class="col">
-        <div class="card" style="width: 18rem; height: 14rem;">
-            <div class="card-body">
-                <h5 class="card-title">Indicadores</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Defina quais indicadores e como aplicar nas empresas</h6>
-                <p class="card-text">Cadastre novos, altere o nivel de qualidade esperado</p>
-                <a href="#" class="card-link">Ver todos</a>
-                <a href="#" class="card-link">Cadastrar Novo</a>
-            </div>
+    <footer class="home-footer text-center">
+        <div class="container">
+            <small>invesT • Projeto de estudo — use este projeto como ponto de partida</small>
         </div>
-    </div>
-
-    <div class="col">
-        <div class="card" style="width: 18rem; height: 14rem;">
-            <div class="card-body">
-                <h5 class="card-title">Avaliar Empresas</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Cadastre os indicadores e veja a nota gerada</h6>
-                <p class="card-text">Cadastre indicadores, veja notas, compare</p>
-                <a href="#" class="card-link">Ver todas</a>
-                <a href="#" class="card-link">Gerar nova avaliação</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col">
-        <div class="card" style="width: 18rem; height: 14rem;">
-            <div class="card-body">
-                <h5 class="card-title">Carrinho de compras</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Analise sua proxima compra</h6>
-                <p class="card-text">Veja quais ações comprar e melhor distribuição destas</p>
-                <a href="#" class="card-link">Ver todas</a>
-                <a href="#" class="card-link">Mês atual</a>
-            </div>
-        </div>
-    </div> *@
+    </footer>
 </div>
