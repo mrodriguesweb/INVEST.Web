@@ -1,6 +1,5 @@
 # INVEST.Web — Investment Tracker (WIP)
 [![CI](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci.yml/badge.svg)](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci.yml)
-[![Web App CI/CD](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/feature-azure-app_mrodriguesweb-invest.yml/badge.svg)](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/feature-azure-app_mrodriguesweb-invest.yml)
 [![Function CI/CD](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci-functions.yml/badge.svg)](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci-functions.yml)
 
 Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying Clean Architecture and DDD-style aggregates (Acao/Tickers).  
