@@ -37,6 +37,13 @@
     </div>
 }
 
+@if (TempData["SendUpdateQuotes"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["SendUpdateQuotes"]
+    </div>
+}
+
 <button type="button" class="btn btn-primary">
     <a asp-controller="Acao" asp-action="PrepareCreate" style="color: #FFF;">Registrar Nova</a>
 </button>
@@ -48,6 +55,8 @@
             <th>LOGO</th>
             <th>NOME</th>
             <th>SETOR</th>
+            <th>COTAÇÕES</th>
+            <th>ÚLTIMA ATUALIZAÇÃO COTAÇÕES</th>
             <th>Ações</th>
         </tr>
     </thead>
@@ -62,10 +71,23 @@
                 </td>
                 <td>@acao.Name</td>
                 <td>@acao.SetorName</td>
+                <td>@(acao.Cotacoes ?? "Não constam cotações para essa ação")</td>
+                <td>
+                    @(
+                        acao.UltimaCotacaoCapturada.HasValue
+                            ? acao.UltimaCotacaoCapturada.Value.ToString("dd/MM/yyyy HH:mm")
+                            : "Nenhuma cotação capturada"
+                    )
+                </td>
                 <td>
                     <a asp-controller="Acao" asp-action="PrepareEdit" asp-route-id="@acao.Id" style="text-decoration: none;">
                         <i class="bi bi-pencil me-2 cursor-pointer"></i>
                     </a>
+
+                    <a asp-controller="Acao" asp-action="AtualizarCotacoes" asp-route-id="@acao.Id" style="text-decoration: none;">
+                        <i class="bi bi-arrow-clockwise me-2 cursor-pointer"></i>
+                    </a>
+
                 </td>
             </tr>
         }

@@ -1,4 +1,5 @@
 ﻿using INVEST.Domain.Entities;
+using INVEST.Domain.Entities.Acoes;
 using Microsoft.EntityFrameworkCore;
 
 namespace INVEST.Infrastructure.Data
@@ -18,6 +19,8 @@ namespace INVEST.Infrastructure.Data
         public DbSet<TipoIndicador> TiposIndicadores { get; set; }
 
         public DbSet<Setor> Setores { get; set; }
+
+        public DbSet<PriceSnapshot> PriceSnapshots { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,6 +59,20 @@ namespace INVEST.Infrastructure.Data
                 .WithMany(c => c.QualidadeSetores)
                 .HasForeignKey(p => p.SetorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PriceSnapshot>(e =>
+            {
+
+                e.HasKey(x => x.Id);
+
+                e.Property(x => x.Price).HasColumnType("numeric(18,4)");
+
+                e.HasOne(p => p.Ticker)
+                .WithMany(c => c.PriceSnapshots)
+                .HasForeignKey(p => p.TickerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            });
 
         }
 

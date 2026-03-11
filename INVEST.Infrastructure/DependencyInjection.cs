@@ -1,9 +1,14 @@
-﻿using INVEST.Application.Acoes.Queries;
+﻿using Azure.Messaging.ServiceBus;
+using INVEST.Application.Acoes.Queries;
 using INVEST.Application.Acoes.Repository;
 using INVEST.Application.Setores.Queries;
+using INVEST.Application.Shared;
+using INVEST.Application.Shared.Messaging;
 using INVEST.Domain.Entities;
 using INVEST.Infrastructure.Data;
+using INVEST.Infrastructure.Messaging;
 using INVEST.Infrastructure.Queries;
+using INVEST.Infrastructure.QuoteProviders;
 using INVEST.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,9 +23,19 @@ namespace INVEST.Infrastructure
             services.AddDbContext<DataContext>(options =>
                 options.UseNpgsql(config.GetConnectionString("DB_INVEST")));
 
+            services.AddHttpClient<IQuoteProvider, AlphaVantageQuoteProvider>(client =>
+            {
+                client.BaseAddress = new Uri("https://www.alphavantage.co/");
+            });
+
+            services.AddSingleton(_ => new ServiceBusClient(config.GetConnectionString("SERVICE_BUS")));
+
+            services.AddScoped<IQuoteUpdatePublisher, ServiceBusQuoteUpdatePublisher>();
+
             services.AddScoped<IAcaoQuery, AcaoQuery>();
             services.AddScoped<ISetorQuery, SetorQuery>();
             services.AddScoped<IAcaoRepository, AcaoRepository>();
+            services.AddScoped<IPriceSnapshotRepository, PriceSnapshotRepository>();
 
             return services;
         }
