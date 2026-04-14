@@ -10,10 +10,12 @@ services:
       - "8080:8080"   # expõe a porta do container para localhost
     depends_on:
       - postgres
+      - rabbitmq
     environment:
       # URL de conexão para o banco
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=DB_INVEST;Username={USER};Password={PASS}"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=DB_INVEST;Username=postgres;Password=12345"
       ASPNETCORE_URLS: "http://+:8080"
+      RABBITMQ__CONNECTION__URL: "amqp://guest:guest@rabbitmq:5672/"
 
   postgres:
     image: postgres:16
@@ -21,12 +23,25 @@ services:
     restart: always
     environment:
       POSTGRES_DB: DB_INVEST
-      POSTGRES_USER: {USER}
-      POSTGRES_PASSWORD: {PASS}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: invest-rabbitmq
+    ports:
+      - "5672:5672"     # AMQP
+      - "15672:15672"   # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
 volumes:
   postgres_data:
+  rabbitmq_data:

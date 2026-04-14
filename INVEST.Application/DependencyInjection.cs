@@ -16,6 +16,8 @@ namespace INVEST.Application
             services.AddScoped<DeleteAcaoHandler>();
             services.AddScoped<AtualizarCotacoesHandler>();
 
+            services.AddScoped<ProcessarQuoteUpdateHandler>();
+
             return services;
         }
     }

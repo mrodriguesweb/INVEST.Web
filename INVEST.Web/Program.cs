@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 var cs = builder.Configuration.GetConnectionString("DB_INVEST");
-Console.WriteLine("DB_INVEST host = " + new Npgsql.NpgsqlConnectionStringBuilder(cs).Host);
 
 builder.Services
     .AddApplication()

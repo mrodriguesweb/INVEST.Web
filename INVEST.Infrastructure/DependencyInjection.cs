@@ -28,9 +28,20 @@ namespace INVEST.Infrastructure
                 client.BaseAddress = new Uri("https://www.alphavantage.co/");
             });
 
-            services.AddSingleton(_ => new ServiceBusClient(config.GetConnectionString("SERVICE_BUS")));
+            //services.AddSingleton(_ => new ServiceBusClient(config.GetConnectionString("SERVICE_BUS")));
+            //services.AddScoped<IQuoteUpdatePublisher, ServiceBusQuoteUpdatePublisher>();
 
-            services.AddScoped<IQuoteUpdatePublisher, ServiceBusQuoteUpdatePublisher>();
+            var amqpUrl = config["RabbitMq:ConnectionUrl"];
+            var exchange = config["RabbitMq:Exchange"];
+
+            if (string.IsNullOrWhiteSpace(amqpUrl))
+                throw new InvalidOperationException("A configuração 'RabbitMq:ConnectionUrl' não foi encontrada.");
+
+            if (string.IsNullOrWhiteSpace(exchange))
+                throw new InvalidOperationException("A configuração 'RabbitMq:Exchange' não foi encontrada.");
+
+            services.AddSingleton<IQuoteUpdatePublisher>(sp =>
+                new RabbitMqQuoteUpdatePublisher(amqpUrl, exchange));
 
             services.AddScoped<IAcaoQuery, AcaoQuery>();
             services.AddScoped<ISetorQuery, SetorQuery>();
