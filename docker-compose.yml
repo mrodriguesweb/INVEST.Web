@@ -1,21 +1,42 @@
 version: "3.9"
 
+# 1. BLOCO REUTILIZÁVEL
+x-shared-environment: &shared-env
+  DOTNET_ENVIRONMENT: Development
+  ConnectionStrings__DB_INVEST: "Host=postgres;Port=5432;Database=DB_INVEST;Username=postgres;Password=XXX"
+  RabbitMq__ConnectionUrl: "amqp://guest:guest@rabbitmq:5672/"
+  AlphaVantage__ApiKey: "XXX"
+
 services:
   invest-web:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: invest-web
+    restart: on-failure
     ports:
-      - "8080:8080"   # expõe a porta do container para localhost
+      - "8080:8080"
     depends_on:
       - postgres
       - rabbitmq
     environment:
-      # URL de conexão para o banco
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=DB_INVEST;Username=postgres;Password=12345"
+      # 2. VARIÁVEIS COMPARTILHADAS
+      <<: *shared-env
+      
+      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: "http://+:8080"
-      RABBITMQ__CONNECTION__URL: "amqp://guest:guest@rabbitmq:5672/"
+
+  invest-worker:
+    build:
+      context: .
+      dockerfile: INVEST.Worker/Dockerfile
+    container_name: invest-worker
+    restart: on-failure
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      <<: *shared-env
 
   postgres:
     image: postgres:16
@@ -24,7 +45,7 @@ services:
     environment:
       POSTGRES_DB: DB_INVEST
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345
+      POSTGRES_PASSWORD: XXX
     ports:
       - "5432:5432"
     volumes:
@@ -34,14 +55,14 @@ services:
     image: rabbitmq:3-management
     container_name: invest-rabbitmq
     ports:
-      - "5672:5672"     # AMQP
-      - "15672:15672"   # Management UI
+      - "5672:5672"
+      - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
-
+      
 volumes:
   postgres_data:
   rabbitmq_data:

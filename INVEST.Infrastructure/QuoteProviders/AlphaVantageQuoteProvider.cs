@@ -23,12 +23,6 @@ namespace INVEST.Infrastructure.QuoteProviders
 
             var response = await _httpClient.GetAsync(url, ct);
 
-            // Leia como string primeiro para debugar
-            var rawContent = await response.Content.ReadAsStringAsync();
-
-            // Use o seu _logger aqui (ou Console.WriteLine se não tiver logger injetado)
-            Console.WriteLine($"[DEBUG ALPHAVANTAGE] JSON Bruto: {rawContent}");
-
             if (!response.IsSuccessStatusCode)
             {
                 return null;
