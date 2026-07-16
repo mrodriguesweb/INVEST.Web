@@ -1,190 +1,90 @@
-# INVEST.Web — Investment Tracker (WIP)
+# INVEST.Web — Distributed Investment Tracker
 [![CI](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci.yml/badge.svg)](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci.yml)
-[![Function CI/CD](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci-functions.yml/badge.svg)](https://github.com/mrodriguesweb/INVEST.Web/actions/workflows/ci-functions.yml)
 
-Investment tracker (WIP) built with **ASP.NET Core MVC + EF Core (PostgreSQL)**, applying **Clean Architecture** and DDD-style aggregates (`Acao` / `Tickers`).
+An investment tracking ecosystem built with **ASP.NET Core MVC, PostgreSQL, and RabbitMQ**. 
 
-This repository is evolved in small iterations to practice:
-- architecture and separation of concerns
-- cloud integrations on Azure
-- asynchronous processing with messaging
-- practical backend patterns
-
-Current Azure-focused studies include:
-- Azure Functions
-- Azure Blob Storage
-- Azure Service Bus (queues)
-- CI/CD with GitHub Actions
+This repository serves as a portfolio showcase of **Event-Driven Architecture (EDA)**, **Clean Architecture**, and **Resilient Background Processing**. Originally built over Azure PaaS (Functions, Service Bus), the architecture has been refactored into a fully containerized distributed system using Docker Compose, demonstrating platform-agnostic engineering skills.
 
 ## Demo
 <p align="center">
   <img src="docs/demo.gif" width="900" alt="Demo - CRUD de Ação" />
 </p>
 
-**Live demo:** [https://mrodriguesweb-invest-bjehhseaagdfcne6.brazilsouth-01.azurewebsites.net/](https://mrodriguesweb-invest-bjehhseaagdfcne6.brazilsouth-01.azurewebsites.net/)
+---
 
-> Nota: ambiente de estudos, pode estar offline/hibernando.
+## 🚀 Core Features & Technical Highlights
+
+### 1. Event-Driven Messaging (RabbitMQ)
+The application decouples the user-facing web interface from heavy data-gathering tasks using asynchronous messaging.
+* **Producer/Consumer Pattern:** The Web MVC acts as a publisher, emitting domain events. Dedicated .NET Background Service Workers consume these events at their own pace.
+* **Smart Topology:** Utilizes `Fanout` exchanges for Pub/Sub scenarios (e.g., broadcasting `QuoteUpdated` events) and `Direct` exchanges for precise error routing.
+* **Resilience & DLQ:** Implements a robust Dead-Letter Queue (DLX/DLQ) strategy. Poison messages (e.g., scraping failures) are gracefully rejected (`requeue: false`) and routed to a centralized graveyard queue with specific routing keys (`fatal_error_indicadores`) for later inspection, preventing CPU-spiking infinite loops.
+
+### 2. Resilient Web Scraping & Integration
+A dedicated worker (`AtualizarIndicadoresWorker`) connects to an undocumented external provider to fetch financial indicators (EBITDA, ROE, Net Margin).
+* **Reverse Engineering:** Extracts internal company IDs via regex DOM parsing and maps raw JSON arrays into Domain Entities.
+* **Anti-Ban Strategies:** Implements customized `HttpClient` headers (spoofing User-Agents and Referers) and randomized **Jitter** delays between requests to prevent IP blocking by Cloudflare.
+* **Graceful Shutdown:** The worker passes `CancellationToken`s down to the Entity Framework Core repository, ensuring database transactions are not corrupted if the Docker container is stopped mid-process.
+
+### 3. Clean Architecture & DDD Concepts
+Dependencies point inward, strictly separating concerns:
+* **Domain:** Encapsulates business rules, Aggregates (`Acao` / `Tickers`), and invariants (e.g., Ticker names cannot be edited after creation).
+* **Application:** Orchestrates use cases, DTOs, and messaging contracts.
+* **Infrastructure:** Manages EF Core (PostgreSQL) persistence, RabbitMQ connections, and external HTTP clients.
+* **Web / Worker:** Entry points restricted to HTTP handling and AMQP consumption, respectively.
 
 ---
 
-## Features
+## 🏗️ Architecture Topology
 
-### Core
-- CRUD de **Ação** (Create / Edit / Delete).
-- **Tickers** como coleção da Ação.
-- Regra de domínio: **Name não é editável** após criação.
-- Separação entre leitura e escrita (Queries/DTOs vs Commands/Handlers).
-- Error handling com middleware/handler global e status pages.
-
-### Company Logos (Azure Functions + Blob)
-- Endpoint no MVC: `GET /logos/{empresa}`.
-- Azure Function HTTP trigger integrada com Azure Blob Storage.
-- Cache em 2 níveis:
-  - **Server-side** com `IMemoryCache`, incluindo *negative cache*.
-  - **Client-side** com `Cache-Control`.
-- Fallback para SVG com iniciais da empresa quando não há logo no blob.
-
-### Quote Update Flow (Azure Service Bus + Azure Functions)
-- A aplicação permite disparar atualização de cotações de forma **assíncrona**.
-- O MVC atua como **producer**, publicando uma mensagem por ticker em uma **queue** do Azure Service Bus.
-- Uma Azure Function com **Service Bus Trigger** atua como **consumer/worker**, processando cada mensagem em background.
-- O processamento consulta uma API externa de cotação e persiste um `PriceSnapshot` no banco.
-- O fluxo usa conceitos importantes de mensageria:
-  - queue-based processing
-  - producer / consumer
-  - message contract
-  - manual message settlement
-  - retry com `Abandon`
-  - DLQ (*dead-letter queue*) para mensagens inválidas ou falhas persistentes
-
----
-
-## Messaging Flow
-
-Fluxo simplificado da atualização de cotações:
-
-1. Usuário aciona **Atualizar Cotações** no MVC.
-2. O controller chama um handler da camada **Application**.
-3. O handler recupera os tickers da ação.
-4. Para cada ticker, a aplicação publica uma mensagem JSON em uma queue do **Azure Service Bus**.
-5. A **Azure Function** é disparada automaticamente quando há mensagens na queue.
-6. A Function desserializa a mensagem e executa a regra de negócio.
-7. A cotação é consultada em um provider externo.
-8. Um `PriceSnapshot` é persistido no PostgreSQL.
-9. Em sucesso, a mensagem é marcada como `Complete`.
-10. Em falha transitória, a mensagem pode ser reenfileirada com `Abandon`.
-11. Em payload inválido ou falha não recuperável, a mensagem pode ir para a **DLQ**.
-
-This flow was implemented mainly as a learning exercise to understand how asynchronous processing works in practice using Azure Service Bus queues and Azure Functions.
-
----
-
-## Architecture
-
-Camadas com dependências apontando para dentro:
-
-- **Web (ASP.NET Core MVC)**
-  - Controllers, Views e ViewModels
-  - inicia fluxos de uso da aplicação
-  - expõe o endpoint `/logos/{empresa}`
-
-- **Application**
-  - use cases / handlers
-  - contratos e abstrações
-  - coordena regras de aplicação
-  - exemplos:
-    - `ICompanyLogoProvider`
-    - `IQuoteUpdatePublisher`
-    - handlers de atualização de cotações
-
-- **Domain**
-  - entidades e invariantes de negócio
-  - agregados como `Acao` e `Tickers`
-
-- **Infrastructure**
-  - EF Core + PostgreSQL
-  - integrações externas
-  - implementação de providers
-  - publicação no Azure Service Bus
-  - persistência de snapshots de cotação
-
-- **Functions**
-  - Azure Functions como entrypoint de background processing
-  - HTTP trigger para logos
-  - Service Bus trigger para processamento assíncrono de mensagens
-
----
-
-## Azure Resources
-
-Current Azure resources used in this project:
-
-- **Azure App Service** for the MVC application
-- **Azure Function App** for background/serverless workloads
-- **Azure Storage Account / Blob Storage** for company logos
-- **Azure Service Bus** for asynchronous quote update processing
-
----
-
-## Configuration
-
-### Web App
-Required settings (local via User Secrets / Azure App Settings):
-
-- `Azure:CompanyLogo:BaseUrl`
-- `Azure:CompanyLogo:FunctionKey`
-- `Azure:ServiceBus:ConnectionString`
-
-### Functions
-Required settings:
-
-- `SERVICE_BUS`
-- `AlphaVantage:ApiKey` *(or other quote provider key, depending on implementation)*
-- database connection string used by the Function project
-
-> Secrets are not committed to the repository.
-
----
-
-## CI/CD
-
-- `ci.yml`
-  - build and test da solução
-
-- `ci-functions.yml`
-  - build/publish/deploy das Azure Functions
-
----
-
-## Learning Goals
-
-This project is also a study repository for practicing concepts such as:
-
-- Clean Architecture in a real ASP.NET Core MVC solution
-- DDD-style modeling with aggregates
-- Azure Functions in different roles (HTTP trigger and Service Bus trigger)
-- Azure Blob Storage integration
-- asynchronous processing with queues
-- retry / DLQ / message lifecycle
-- cloud-oriented application design
-- CI/CD with GitHub Actions
-
-The goal is not only to build features, but also to understand the architectural trade-offs behind each iteration.
-
----
-
-## Quickstart (Docker)
-
-Pré-requisitos: Docker Desktop com Docker Compose.
-
-```bash
-docker compose up --build
+```mermaid
+graph TD
+    User([User]) --> Web[INVEST.Web MVC]
+    Web -->|Publishes Event| ExchangeFanout((Quotes.Updated\nFanout Exchange))
+    Web <--> DB[(PostgreSQL\nDB_INVEST)]
+    
+    ExchangeFanout -->|Binds| QueueIndicators[quotes-indicators-update Queue]
+    
+    QueueIndicators --> Worker[INVEST.Worker\nBackground Service]
+    Worker -->|Scrapes Data| MarketAPI((External Market Data))
+    Worker -->|Saves Indicators| DB
+    
+    Worker -.->|On Fatal Error| ExchangeDLX((Quotes.DLX\nDirect Exchange))
+    ExchangeDLX -.->|fatal_error_indicadores| QueueDLQ[quotes-indicators-update-dlq]
 ```
 
 ---
 
-## Notes
+## ⚙️ Quickstart (Docker Compose)
 
-- This is a study project and evolves incrementally.
-- Some Azure-hosted resources may be paused, unavailable, or changed over time due to cost control.
-- The messaging flow currently uses Azure Service Bus queues. A future evolution may explore topics/subscriptions for publish/subscribe scenarios.
+The entire infrastructure (Web App, Background Workers, PostgreSQL database, PgAdmin, and RabbitMQ message broker) is orchestrated via Docker Compose.
+
+**1. Clone the repository**
+```bash
+git clone [https://github.com/mrodriguesweb/INVEST.Web.git](https://github.com/mrodriguesweb/INVEST.Web.git)
+cd INVEST.Web
+```
+
+**2. Setup Environment Variables**
+Create a `.env` file in the root directory to hold sensitive credentials (this file is git-ignored):
+```env
+DB_PASSWORD=your_secure_db_password
+EMAIL_PASSWORD=your_app_password
+```
+
+**3. Spin up the cluster**
+```bash
+docker compose up -d --build
+```
+
+**Access Points:**
+* **INVEST.Web App:** `http://localhost:8080`
+* **RabbitMQ Management UI:** `http://localhost:15672` (guest / guest)
+* **PgAdmin:** `http://localhost:5050`
+
+---
+
+## 📈 Future Improvements (Roadmap)
+- [ ] **Polly Integration:** Introduce `IHttpClientFactory` policies (Circuit Breaker and Exponential Backoff) for network transient faults before falling back to the RabbitMQ DLQ.
+- [ ] **Observability:** Add OpenTelemetry tracing to correlate Web requests with Background Worker executions.
+- [ ] **Unit Testing:** Expand coverage for Application Handlers and Domain entities.
