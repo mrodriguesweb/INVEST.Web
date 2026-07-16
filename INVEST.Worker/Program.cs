@@ -22,5 +22,20 @@ builder.Services.AddHostedService(sp =>
     return new ProcessarQuoteUpdateWorker(amqpUrl, logger, scopeFactory);
 });
 
+builder.Services.AddHostedService(sp =>
+{
+    var logger = sp.GetRequiredService<ILogger<NotificarQuoteUpdatedWorker>>();
+    var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+
+    return new NotificarQuoteUpdatedWorker(amqpUrl, logger, scopeFactory);
+});
+
+builder.Services.AddHostedService(sp =>
+{
+    var logger = sp.GetRequiredService<ILogger<AtualizarIndicadoresWorker>>();
+    var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+    return new AtualizarIndicadoresWorker(amqpUrl, logger, scopeFactory);
+});
+
 var host = builder.Build();
 host.Run();

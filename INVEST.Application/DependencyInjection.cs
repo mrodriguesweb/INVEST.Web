@@ -1,5 +1,6 @@
 ﻿using INVEST.Application.Acoes.Handlers;
 using INVEST.Application.Acoes.Services;
+using INVEST.Application.QualidadeIndicador.Handlers;
 using INVEST.Application.Setores.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +18,8 @@ namespace INVEST.Application
             services.AddScoped<AtualizarCotacoesHandler>();
 
             services.AddScoped<ProcessarQuoteUpdateHandler>();
+
+            services.AddScoped<EditQualidadeFaixasHandler>();
 
             return services;
         }

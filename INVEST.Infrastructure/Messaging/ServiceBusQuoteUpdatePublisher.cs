@@ -1,5 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 using INVEST.Application.Shared.Messaging;
+using INVEST.Application.Shared.Messaging.QuoteUpdate;
 using System.Text.Json;
 
 namespace INVEST.Infrastructure.Messaging

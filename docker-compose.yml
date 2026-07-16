@@ -3,9 +3,10 @@ version: "3.9"
 # 1. BLOCO REUTILIZÁVEL
 x-shared-environment: &shared-env
   DOTNET_ENVIRONMENT: Development
-  ConnectionStrings__DB_INVEST: "Host=postgres;Port=5432;Database=DB_INVEST;Username=postgres;Password=XXX"
-  RabbitMq__ConnectionUrl: "amqp://guest:guest@rabbitmq:5672/"
-  AlphaVantage__ApiKey: "XXX"
+  ConnectionStrings__DB_INVEST: "Host=postgres;Port=5432;Database=DB_INVEST;Username=postgres;Password=***"
+  RabbitMq__ConnectionUrl: "amqp://guest:***@rabbitmq:5672/"
+  AlphaVantage__ApiKey: "***"
+  MarketData__BaseUrl: "***"
 
 services:
   invest-web:
@@ -37,6 +38,11 @@ services:
       - rabbitmq
     environment:
       <<: *shared-env
+      
+      EmailSettings__SmtpServer: "smtp.gmail.com"
+      EmailSettings__Port: "587"
+      EmailSettings__SenderEmail: "seu_email@gmail.com"
+      EmailSettings__SenderPassword: "***"
 
   postgres:
     image: postgres:16
@@ -45,11 +51,23 @@ services:
     environment:
       POSTGRES_DB: DB_INVEST
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: XXX
+      POSTGRES_PASSWORD: "***"
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: invest-pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@invest.com
+      PGADMIN_DEFAULT_PASSWORD: "***"
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
       
   rabbitmq:
     image: rabbitmq:3-management
@@ -59,7 +77,7 @@ services:
       - "15672:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_PASS: "***"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
       

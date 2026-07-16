@@ -1,5 +1,6 @@
 using INVEST.Application.Acoes.Handlers;
 using INVEST.Application.Shared.Messaging;
+using INVEST.Application.Shared.Messaging.QuoteUpdate;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -49,7 +50,7 @@ namespace INVEST.Worker
         private async Task SetupTopologyAsync(CancellationToken ct)
         {
             // Declara o DLX e a DLQ
-            await _channel!.ExchangeDeclareAsync(DlqExchangeName, ExchangeType.Fanout, durable: true, autoDelete: false, cancellationToken: ct);
+            await _channel!.ExchangeDeclareAsync(DlqExchangeName, ExchangeType.Direct, durable: true, autoDelete: false, cancellationToken: ct);
             await _channel.QueueDeclareAsync($"{QueueName}-dlq", durable: true, exclusive: false, autoDelete: false, cancellationToken: ct);
             await _channel.QueueBindAsync($"{QueueName}-dlq", DlqExchangeName, string.Empty, cancellationToken: ct);
 
@@ -98,11 +99,19 @@ namespace INVEST.Worker
                     {
                         var handler = scope.ServiceProvider.GetRequiredService<ProcessarQuoteUpdateHandler>();
 
-                        await handler.HandleAsync(payload, stoppingToken);
+                        var updatedPrice = await handler.HandleAsync(payload, stoppingToken);
 
-                        // O PRÓXIMO EVENTO ENTRA AQUI:
-                        // var publisher = scope.ServiceProvider.GetRequiredService<IQuoteUpdatedPublisher>();
-                        // await publisher.PublishAsync(new QuoteUpdatedIntegrationEvent(...));
+                        var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+
+                        var integrationEvent = new QuoteUpdatedIntegrationEvent(
+                            payload.Ticker,
+                            updatedPrice,
+                            DateTime.UtcNow
+                        );
+
+                        await publisher.PublishAsync(
+                            message: integrationEvent,
+                            exchange: "quotes.updated.exchange");
                     }
 
                     // Sucesso = Ack

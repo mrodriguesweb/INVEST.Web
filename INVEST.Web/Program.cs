@@ -45,12 +45,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
-// aplicar migrations/Seed inicial dados apenas em Dev
+// aplicar migrations apenas em Dev
 if (app.Environment.IsDevelopment())
 {
     app.Services.ApplyMigrations();
-    app.Services.SeedDatabase();
 }
+
+app.Services.SeedDatabase();
 
 app.UseStaticFiles();
 

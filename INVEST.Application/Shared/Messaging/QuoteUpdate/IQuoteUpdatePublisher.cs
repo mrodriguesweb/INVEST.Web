@@ -1,4 +1,4 @@
-﻿namespace INVEST.Application.Shared.Messaging
+﻿namespace INVEST.Application.Shared.Messaging.QuoteUpdate
 {
     public interface IQuoteUpdatePublisher
     {

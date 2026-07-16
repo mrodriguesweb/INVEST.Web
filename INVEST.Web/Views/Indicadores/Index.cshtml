@@ -1,0 +1,169 @@
+﻿@using INVEST.Web.ViewModels.IndicadoresVM
+@model IEnumerable<INVEST.Web.ViewModels.IndicadoresVM.IndicadorTickerViewModel>
+
+@{
+    ViewData["Title"] = "Radar de Indicadores";
+}
+
+<style>
+    .table-indicadores th {
+        background-color: #f8f9fa;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .table-indicadores td {
+        vertical-align: middle;
+        font-weight: 500;
+        text-align: right;
+    }
+
+        .table-indicadores td.text-center {
+            text-align: center;
+        }
+
+        .table-indicadores td.text-left {
+            text-align: left;
+        }
+
+    .col-ticker {
+        background-color: #e9ecef !important;
+        font-weight: bold;
+    }
+
+    /* --- CORES DOS INDICADORES (Vibrantes) --- */
+    .bg-excelente {
+        background-color: #00b050 !important;
+        color: white !important;
+        font-weight: 600;
+    }
+    /* Verde Escuro */
+    .bg-bom {
+        background-color: #92d050 !important;
+        color: black !important;
+        font-weight: 600;
+    }
+    /* Verde Claro */
+    .bg-atencao {
+        background-color: #ffff00 !important;
+        color: black !important;
+        font-weight: 600;
+    }
+    /* Amarelo */
+    .bg-alerta {
+        background-color: #ffc000 !important;
+        color: black !important;
+        font-weight: 600;
+    }
+    /* Laranja */
+    .bg-critico {
+        background-color: #ff0000 !important;
+        color: white !important;
+        font-weight: 600;
+    }
+    /* Vermelho */
+    .bg-neutro {
+        background-color: #f8f9fa !important;
+        color: #6c757d !important;
+    }
+    /* Sem dados */
+
+    /* --- DEGRADÊ DA NOTA FINAL --- */
+    .nota-10 {
+        background-color: #1a4da0 !important;
+        color: white !important;
+        font-weight: bold;
+    }
+    /* Azul Escuro */
+    .nota-9 {
+        background-color: #3b71ca !important;
+        color: white !important;
+        font-weight: bold;
+    }
+    /* Azul Médio */
+    .nota-8 {
+        background-color: #89b3f4 !important;
+        color: black !important;
+        font-weight: bold;
+    }
+    /* Azul Claro */
+    .nota-7 {
+        background-color: #daddf0 !important;
+        color: black !important;
+        font-weight: bold;
+    }
+    /* Azul Bem Claro */
+    .nota-ruim {
+        background-color: #dc3545 !important;
+        color: white !important;
+        font-weight: bold;
+    }
+    /* Alerta Vermelho para notas baixas */
+</style>
+
+<div class="container-fluid mt-4">
+    <h2 class="mb-4"><i class="bi bi-graph-up-arrow"></i> Radar de Indicadores</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="tabelaIndicadores" class="table table-bordered table-hover table-indicadores mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-left">Ticker</th>
+                            <th>Marg. Liq %</th>
+                            <th>EBITDA %</th>
+                            <th>ROE %</th>
+                            <th class="text-center">Setor</th>
+                            <th class="text-center">Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-left col-ticker">@item.Ticker</td>
+
+                                <td class="@IndicadorTickerViewModel.ObterClasseCor(item.MargemLiquida.NivelQualidadeId)">
+                                    @item.MargemLiquida.Valor.ToString("N2")
+                                </td>
+
+                                <td class="@IndicadorTickerViewModel.ObterClasseCor(item.Ebitda.NivelQualidadeId)">
+                                    @item.Ebitda.Valor.ToString("N2")
+                                </td>
+
+                                <td class="@IndicadorTickerViewModel.ObterClasseCor(item.Roe.NivelQualidadeId)">
+                                    @item.Roe.Valor.ToString("N2")
+                                </td>
+
+                                <td class="text-center text-muted">@item.Setor</td>
+
+                                <td class="text-center @IndicadorTickerViewModel.ObterClasseCorNota(item.Nota)">@item.Nota</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('#tabelaIndicadores').DataTable({
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+                },
+                "pageLength": 15, // Quantidade de linhas padrão
+                "order": [[5, "desc"]], // Ordena pela coluna "Nota" (índice 6) de forma decrescente
+                "columnDefs": [
+                    { "orderable": false, "targets": [4] } // Remove a setinha de ordenação do campo "Setor" se desejar
+                ]
+            });
+        });
+    </script>
+}

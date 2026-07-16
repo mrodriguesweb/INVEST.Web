@@ -107,7 +107,7 @@ namespace INVEST.Infrastructure.Data.Migrations
 
                     b.HasIndex("TipoIndicadorId");
 
-                    b.ToTable("Indicador");
+                    b.ToTable("Indicadores");
                 });
 
             modelBuilder.Entity("INVEST.Domain.Entities.NivelQualidade", b =>
@@ -154,7 +154,7 @@ namespace INVEST.Infrastructure.Data.Migrations
 
                     b.HasIndex("TipoIndicadorId");
 
-                    b.ToTable("QualidadeIndicador");
+                    b.ToTable("QualidadeIndicadores");
                 });
 
             modelBuilder.Entity("INVEST.Domain.Entities.QualidadeSetor", b =>
