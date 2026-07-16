@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "functions", "functions", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Company.Functions", "azure\functions\Company.Functions\Company.Functions.csproj", "{DAA661CA-E286-47DD-8CDB-B0D15ACD4D76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "INVEST.Worker", "INVEST.Worker\INVEST.Worker.csproj", "{0FBEA0FC-3E5C-3EC1-B1ED-A0B2FAD3B93A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{DAA661CA-E286-47DD-8CDB-B0D15ACD4D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAA661CA-E286-47DD-8CDB-B0D15ACD4D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAA661CA-E286-47DD-8CDB-B0D15ACD4D76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FBEA0FC-3E5C-3EC1-B1ED-A0B2FAD3B93A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FBEA0FC-3E5C-3EC1-B1ED-A0B2FAD3B93A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FBEA0FC-3E5C-3EC1-B1ED-A0B2FAD3B93A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FBEA0FC-3E5C-3EC1-B1ED-A0B2FAD3B93A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

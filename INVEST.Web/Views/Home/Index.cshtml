@@ -155,15 +155,15 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <span class="feature-badge">Indicadores</span>
-                            <h5 class="card-title mt-2">Defina métricas e regras <span class="em-breve">Em breve</span></h5>
+                            <h5 class="card-title mt-2">Defina métricas e regras</h5>
                         </div>
                     </div>
 
                     <p class="card-text text-muted">Crie indicadores e regras de avaliação para comparar empresas segundo critérios padronizados.</p>
 
                     <div class="mt-3">
-                        <button class="btn btn-sm btn-outline-primary disabled-link">Ver</button>
-                        <button class="btn btn-sm btn-outline-secondary disabled-link">Cadastrar</button>
+                        <a asp-controller="Indicadores" asp-action="Index" class="btn btn-sm btn-primary me-2">Ver</a>
+                        <a asp-controller="TipoIndicador" asp-action="Index" class="btn btn-sm btn-primary me-2">Definir Métricas</a>
                     </div>
                 </div>
             </div>

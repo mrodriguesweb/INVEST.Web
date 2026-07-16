@@ -1,4 +1,6 @@
-bin/
-obj/
-.git/
-.vs/
+**/.dockerignore
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/out

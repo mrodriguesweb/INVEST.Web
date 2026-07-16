@@ -22,6 +22,7 @@ namespace INVEST.Infrastructure.QuoteProviders
             var url = $"query?function=GLOBAL_QUOTE&symbol={ticker}.SA&apikey={apiKey}";
 
             var response = await _httpClient.GetAsync(url, ct);
+
             if (!response.IsSuccessStatusCode)
             {
                 return null;

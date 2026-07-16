@@ -17,5 +17,15 @@
 
         public TipoIndicador TipoIndicador { get; set; }
 
+        private QualidadeIndicador() { }
+
+        public QualidadeIndicador(int tipoIndicadorId, int nivelQualidadeId, decimal valorMinimo, decimal valorMaximo)
+        {
+            TipoIndicadorId = tipoIndicadorId;
+            NivelQualidadeId = nivelQualidadeId;
+            ValorMinimo = valorMinimo;
+            ValorMaximo = valorMaximo;
+        }
+
     }
 }

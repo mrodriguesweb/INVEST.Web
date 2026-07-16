@@ -1,6 +1,6 @@
 ﻿namespace invesT.Enums
 {
-    public enum TypeIndicador
+    public enum TypeIndicadorValue
     {
 
         DECIMAL = 1,

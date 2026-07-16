@@ -22,6 +22,12 @@ namespace INVEST.Infrastructure.Data
 
         public DbSet<PriceSnapshot> PriceSnapshots { get; set; }
 
+        public DbSet<Indicador> Indicadores { get; set; }
+
+        public DbSet<QualidadeIndicador> QualidadeIndicadores { get; set; }
+
+        public DbSet<NivelQualidade> NivelQualidade { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Ticker>()

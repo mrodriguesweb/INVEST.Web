@@ -1,0 +1,134 @@
+﻿@model INVEST.Web.ViewModels.IndicadoresVM.TipoIndicadorEditViewModel
+
+@{
+    ViewData["Title"] = $"Editar Faixas: {Model.Name}";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-pencil-square"></i> Configurar Faixas: @Model.Name</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+    </div>
+
+    <form asp-controller="TipoIndicador" asp-action="Edit" method="post" id="formFaixas">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Parâmetros de Qualidade</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0" id="tabelaFaixas">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 40%;">Nível de Qualidade</th>
+                            <th style="width: 25%;">Valor Mínimo</th>
+                            <th style="width: 25%;">Valor Máximo</th>
+                            <th style="width: 10%;" class="text-center">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="faixasBody">
+                        @* Renderiza as faixas que JÁ EXISTEM *@
+                        @for (int i = 0; i < Model.Qualidades.Count; i++)
+                        {
+                            <tr class="faixa-row">
+                                <td>
+                                    <select name="Qualidades[@i].NivelQualidadeId" class="form-select" asp-items="Model.NiveisDisponiveis">
+                                        <option value="">Selecione...</option>
+                                    </select>
+                                    <script>
+                                        // Pequeno hack para pré-selecionar o valor correto vindo do banco
+                                        document.querySelector('select[name="Qualidades[@i].NivelQualidadeId"]').value = '@Model.Qualidades[i].NivelQualidadeId';
+                                    </script>
+                                </td>
+                                <td>
+                                    <input type="number" step="0.01" name="Qualidades[@i].ValorMinimo" value="@Model.Qualidades[i].ValorMinimo.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" class="form-control" required />
+                                </td>
+                                <td>
+                                    <input type="number" step="0.01" name="Qualidades[@i].ValorMaximo" value="@Model.Qualidades[i].ValorMaximo.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)" class="form-control" required />
+                                </td>
+                                <td class="text-center align-middle">
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-remover">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer bg-white">
+                <button type="button" class="btn btn-sm btn-success" id="btnAdicionarFaixa">
+                    <i class="bi bi-plus-lg"></i> Adicionar Nova Faixa
+                </button>
+            </div>
+        </div>
+
+        <div class="text-end">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-save"></i> Salvar Alterações
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const btnAdicionar = document.getElementById("btnAdicionarFaixa");
+            const faixasBody = document.getElementById("faixasBody");
+
+            // Opções do Select renderizadas do servidor para o JS conseguir clonar
+            const selectOptions = `@Html.Raw(string.Join("", Model.NiveisDisponiveis.Select(n => $"<option value='{n.Value}'>{n.Text}</option>")))`;
+
+            btnAdicionar.addEventListener("click", function () {
+                // Conta quantas linhas já existem para definir o index correto (Qualidades[2], Qualidades[3], etc)
+                const index = faixasBody.querySelectorAll(".faixa-row").length;
+
+                const tr = document.createElement("tr");
+                tr.className = "faixa-row";
+                tr.innerHTML = `
+                    <td>
+                        <select name="Qualidades[${index}].NivelQualidadeId" class="form-select" required>
+                            <option value="">Selecione...</option>
+                            ${selectOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" name="Qualidades[${index}].ValorMinimo" class="form-control" required />
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" name="Qualidades[${index}].ValorMaximo" class="form-control" required />
+                    </td>
+                    <td class="text-center align-middle">
+                        <button type="button" class="btn btn-sm btn-outline-danger btn-remover">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                faixasBody.appendChild(tr);
+            });
+
+            // Delegação de evento para o botão de remover (funciona mesmo para elementos criados depois)
+            faixasBody.addEventListener("click", function (e) {
+                if (e.target.closest(".btn-remover")) {
+                    const row = e.target.closest(".faixa-row");
+                    row.remove();
+                    recalcularIndices();
+                }
+            });
+
+            // O ASP.NET exige que os índices do array sejam sequenciais (0, 1, 2...).
+            // Se eu apagar a do meio, preciso renumerar os 'names' para não quebrar o POST.
+            function recalcularIndices() {
+                const rows = faixasBody.querySelectorAll(".faixa-row");
+                rows.forEach((row, index) => {
+                    row.querySelector("select").name = `Qualidades[${index}].NivelQualidadeId`;
+                    const inputs = row.querySelectorAll("input");
+                    inputs[0].name = `Qualidades[${index}].ValorMinimo`;
+                    inputs[1].name = `Qualidades[${index}].ValorMaximo`;
+                });
+            }
+        });
+    </script>
+}

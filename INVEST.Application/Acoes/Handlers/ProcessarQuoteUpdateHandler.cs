@@ -7,7 +7,7 @@ namespace INVEST.Application.Acoes.Handlers
 {
     public class ProcessarQuoteUpdateHandler(IQuoteProvider quoteProvider, IPriceSnapshotRepository snapshotRepository)
     {
-        public async Task HandleAsync(QuoteUpdateRequestedMessage message, CancellationToken ct = default)
+        public async Task<decimal> HandleAsync(QuoteUpdateRequestedMessage message, CancellationToken ct = default)
         {
             var price = await quoteProvider.GetQuoteAsync(message.Ticker.Name, ct);
 
@@ -23,6 +23,8 @@ namespace INVEST.Application.Acoes.Handlers
             );
 
             await snapshotRepository.AddAsync(snapshot, ct);
+
+            return price.Value;
         }
     }
 }

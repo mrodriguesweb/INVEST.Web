@@ -10,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 var cs = builder.Configuration.GetConnectionString("DB_INVEST");
-Console.WriteLine("DB_INVEST host = " + new Npgsql.NpgsqlConnectionStringBuilder(cs).Host);
 
 builder.Services
     .AddApplication()
@@ -46,12 +45,13 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
-// aplicar migrations/Seed inicial dados apenas em Dev
+// aplicar migrations apenas em Dev
 if (app.Environment.IsDevelopment())
 {
-    //app.Services.ApplyMigrations();
-    //app.Services.SeedDatabase();
+    app.Services.ApplyMigrations();
 }
+
+app.Services.SeedDatabase();
 
 app.UseStaticFiles();
 

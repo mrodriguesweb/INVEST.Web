@@ -5,7 +5,7 @@ using INVEST.Application.Tickers.DTOs;
 namespace INVEST.Application.Acoes.Handlers
 {
 
-    public class AtualizarCotacoesHandler(IAcaoQuery acaoQuery, IQuoteUpdatePublisher publisher)
+    public class AtualizarCotacoesHandler(IAcaoQuery acaoQuery, IEventPublisher publisher)
     {
         public async Task HandleAsync(int acaoId, CancellationToken ct = default)
         {
@@ -28,7 +28,9 @@ namespace INVEST.Application.Acoes.Handlers
                     RequestedAtUtc: DateTime.UtcNow
                 );
 
-                await publisher.PublishAsync(message, ct);
+                var messageId = $"{ticker.Id}-{DateTime.UtcNow:yyyyMMddHHmmss}";
+
+                await publisher.PublishAsync(message: message, exchange: "quotes.exchange", messageId: messageId, ct: ct);
             }
         }
     }
